@@ -1,0 +1,1573 @@
+mads 2.0.6 build 58 (28 Jan 17)
+Source: curso01.asm
+     1 				    icl '../base/sys_equates.m65'
+Source: sys_equates.m65
+     1 				;================================================================================
+     2 				; System equates, Atari XL + mads [NRV 2009]
+     3 				;================================================================================
+     4
+     5 				;personales
+     6 				;
+     7 				;punteros
+     8 				;
+     9 = 00CB			PT	= $CB
+    10 = 0080			PTDATA	= $80
+    11 				;----------------------------------------
+    12 				; GTIA:
+    13 				;----------------------------------------
+    14
+    15 = D000			M0PF	= $D000  ; read only
+    16 = D001			M1PF	= $D001  ; read only
+    17 = D002			M2PF	= $D002  ; read only
+    18 = D003			M3PF	= $D003  ; read only
+    19
+    20 = D004			P0PF	= $D004  ; read only
+    21 = D005			P1PF	= $D005  ; read only
+    22 = D006			P2PF	= $D006  ; read only
+    23 = D007			P3PF	= $D007  ; read only
+    24
+    25 = D008			M0PL	= $D008  ; read only
+    26 = D009			M1PL	= $D009  ; read only
+    27 = D00A			M2PL	= $D00A  ; read only
+    28 = D00B			M3PL	= $D00B  ; read only
+    29
+    30 = D00C			P0PL	= $D00C  ; read only
+    31 = D00D			P1PL	= $D00D  ; read only
+    32 = D00E			P2PL	= $D00E  ; read only
+    33 = D00F			P3PL	= $D00F  ; read only
+    34
+    35 = D010			TRIG0	= $D010  ; read only
+    36 = D011			TRIG1	= $D011  ; read only
+    37 = D012			TRIG2	= $D012  ; read only
+    38 = D013			TRIG3	= $D013  ; read only
+    39
+    40 = D014			PAL		= $D014  ; read only
+    41
+    42 				; positions for normal screen: 48 left (+160)--> 208 right (or 32-->224 for wide playfield)
+    43 				; 32 top (+192)--> 224 bottom (or 16-->112 for double line resolution)
+    44 = D000			HPOSP0	= $D000  ; write only
+    45 = D001			HPOSP1	= $D001  ; write only
+    46 = D002			HPOSP2	= $D002  ; write only
+    47 = D003			HPOSP3	= $D003  ; write only
+    48
+    49 = D004			HPOSM0	= $D004  ; write only
+    50 = D005			HPOSM1	= $D005  ; write only
+    51 = D006			HPOSM2	= $D006  ; write only
+    52 = D007			HPOSM3	= $D007  ; write only
+    53
+    54 				; 0 (or 2) normal width, 1 double width, 4 quadruple width
+    55 = D008			SIZEP0	= $D008  ; write only
+    56 = D009			SIZEP1	= $D009  ; write only
+    57 = D00A			SIZEP2	= $D00A  ; write only
+    58 = D00B			SIZEP3	= $D00B  ; write only
+    59
+    60 = D00C			SIZEM	= $D00C  ; write only		// the same 2 bits as the players, but in one byte, in this order: m3m2m1m0
+    61
+    62 = D00D			GRAFP0	= $D00D  ; write only
+    63 = D00E			GRAFP1	= $D00E  ; write only
+    64 = D00F			GRAFP2	= $D00F  ; write only
+    65 = D010			GRAFP3	= $D010  ; write only
+    66
+    67 = D011			GRAFM	= $D011  ; write only		// 4 missiles in this order: m3m2m1m0
+    68
+    69 = D012			COLPM0	= $D012  ; write only
+    70 = D013			COLPM1	= $D013  ; write only
+    71 = D014			COLPM2	= $D014  ; write only
+    72 = D015			COLPM3	= $D015  ; write only
+    73
+    74 = D016			COLPF0	= $D016  ; write only
+    75 = D017			COLPF1	= $D017  ; write only
+    76 = D018			COLPF2	= $D018  ; write only
+    77 = D019			COLPF3	= $D019  ; write only
+    78
+    79 = D01A			COLBK	= $D01A  ; write only
+    80
+    81 = D01B			PRIOR	= $D01B  ; write only
+    82 = D01C			VDELAY	= $D01C  ; write only
+    83 = D01D			GRACTL	= $D01D  ; write only
+    84 = D01E			HITCLR	= $D01E  ; write only
+    85
+    86 = D01F			CONSOL	= $D01F  ; read and write
+    87
+    88 				;----------------------------------------
+    89 				; POKEY:
+    90 				;----------------------------------------
+    91
+    92 = D200			POT0	= $D200  ; read only
+    93 = D201			POT1	= $D201  ; read only
+    94 = D202			POT2	= $D202  ; read only
+    95 = D203			POT3	= $D203  ; read only
+    96 = D204			POT4	= $D204  ; read only
+    97 = D205			POT5	= $D205  ; read only
+    98 = D206			POT6	= $D206  ; read only
+    99 = D207			POT7	= $D207  ; read only
+   100
+   101 = D208			ALLPOT	= $D208  ; read only
+   102
+   103 = D209			KBCODE	= $D209  ; read only
+   104 = D20A			RANDOM	= $D20A  ; read only
+   105
+   106 = D20D			SERIN	= $D20D  ; read only
+   107 = D20E			IRQST	= $D20E  ; read only
+   108 = D20F			SKSTAT	= $D20F  ; read only
+   109
+   110
+   111 = D200			AUDF1	= $D200  ; write only
+   112 = D201			AUDC1	= $D201  ; write only
+   113 = D202			AUDF2	= $D202  ; write only
+   114 = D203			AUDC2	= $D203  ; write only
+   115 = D204			AUDF3	= $D204  ; write only
+   116 = D205			AUDC3	= $D205  ; write only
+   117 = D206			AUDF4	= $D206  ; write only
+   118 = D207			AUDC4	= $D207  ; write only
+   119
+   120 = D208			AUDCTL	= $D208  ; write only
+   121
+   122 = D209			STIMER	= $D209  ; write only
+   123 = D20A			SKREST	= $D20A  ; write only
+   124 = D20B			POTGO	= $D20B  ; write only
+   125
+   126 = D20D			SEROUT	= $D20D  ; write only
+   127 = D20E			IRQEN	= $D20E  ; write only
+   128 = D20F			SKCTL	= $D20F  ; write only
+   129
+   130 				;----------------------------------------
+   131 				; PIA:
+   132 				;----------------------------------------
+   133
+   134 = D300			PORTA	= $D300  ; read and write
+   135 = D301			PORTB	= $D301  ; read and write
+   136 = D302			PACTL	= $D302  ; read and write
+   137 = D303			PBCTL	= $D303  ; read and write
+   138
+   139 				;----------------------------------------
+   140 				; ANTIC:
+   141 				;----------------------------------------
+   142
+   143 = D40B			VCOUNT	= $D40B  ; read only
+   144
+   145 = D40C			PENH	= $D40C  ; read only
+   146 = D40D			PENV	= $D40D  ; read only
+   147
+   148 = D40F			NMIST	= $D40F  ; read only
+   149
+   150
+   151 = D400			DMACTL	= $D400  ; write only
+   152 = D401			CHACTL	= $D401  ; write only
+   153 = D402			DLISTL	= $D402  ; write only
+   154 = D403			DLISTH	= $D403  ; write only
+   155 = D404			HSCROL	= $D404  ; write only
+   156 = D405			VSCROL	= $D405  ; write only
+   157 = D407			PMBASE	= $D407  ; write only
+   158 = D409			CHBASE	= $D409  ; write only
+   159 = D40A			WSYNC	= $D40A  ; write only
+   160 = D40E			NMIEN	= $D40E  ; write only
+   161 = D40F			NMIRES	= $D40F  ; write only
+   162
+   163 				;----------------------------------------
+   164 				; Shadow registers:
+   165 				;----------------------------------------
+   166
+   167 = 0218			CDTMV1	= $218
+   168 = 021A			CDTMV2	= $21a
+   169 = 021C			CDTMV3	= $21c
+   170 = 021E			CDTMV4	= $21e
+   171 = 0220			CDTMV5	= $220
+   172
+   173
+   174 = 022F			SDMCTL	= $22f	; shadow of DMACTL
+   175 = 026F			GPRIOR	= $26f	; shadow of PRIOR
+   176
+   177 = 02C0			PCOLR0	= $2c0	; shadow of COLPM0
+   178 = 02C1			PCOLR1  = $2c1
+   179 = 02C2			PCOLR2  = $2c2
+   180 = 02C3			PCOLR3  = $2c3
+   181 = 02C4			COLOR0	= $2c4	; shadow of COLPF0
+   182 = 02C5			COLOR1  = $2c5
+   183 = 02C6			COLOR2  = $2c6
+   184 = 02C7			COLOR3  = $2c7
+   185 = 02C8			COLOR4  = $2c8
+   186
+   187 = 02E0			RUNAD	= $2e0
+   188 = 02E2			INITAD	= $2e2
+   189
+   190 = 0014			RTCLOCK	= $14
+   191 = 0041			SOUNDR	= $41
+   192 = 0042			CRITIC	= $42
+   193 = 004D			ATRACT	= 77
+   194
+   195 = 0052			LMARGN = $52
+   196 = 0053			RMARGN = $53
+   197 = 006A			RAMTOP = $6A
+   198
+   199 = 02F4			CHBAS	= 756	; shadow of CHBASE
+   200 = 02FC			CH		= 764
+   201 = 02F3			CHACT	= 755
+   202
+   203 = 0340			ICHID = $340
+   204 = 0341			ICDNO = $341
+   205 = 0342			ICCMD = $342
+   206 = 0343			ICSTA = $343
+   207 = 0344			ICBAL = $344
+   208 = 0345			ICBAH = $345
+   209 = 0346			ICPTL = $346
+   210 = 0347			ICPTH = $347
+   211 = 0348			ICBLL = $348
+   212 = 0349			ICBLH = $349
+   213 = 034A			ICAX1 = $34A
+   214 = 034B			ICAX2 = $34B
+   215
+   216 = 03F8			BASICF  = $3f8
+   217 = 03FA			GINTLK  = $3fa
+   218
+   219
+   220 = 0230			SDLSTL	= $230	; display list address
+   221 = 0200			VDSLST	= $200	; DLI address
+   222
+   223 = 0303			DSTATS	= $303
+   224 = 0304			DBUFLO	= $304
+   225 = 0305			DBUFHI	= $305
+   226
+   227 = 030A			DAUX1	= $30A
+   228 = 030B			DAUX2	= $30B
+   229
+   230
+   231 = 0270			PADDL0	= 624	; 0-228 , shadow of POT0
+   232 = 027C			PTRIG0	= 636	; 0 = PRESSED , shadow of PTRG0
+   233 = 0278			STICK0	= 632	; 0000 = RLDU , shadow of PORTA
+   234 = 0284			STRIG0	= 644	; 0 = PRESSED , shadow of TRIG0
+   235
+   236 = 0244			COLDST	= $244	; non zero --> do a cold start when pressing the reset key
+   237
+   238 				;----------------------------------------
+   239 				; VBI:
+   240 				;----------------------------------------
+   241
+   242 = E45C			SETVBV			= $E45C
+   243 = E45F			XITVB_I			= $E45F
+   244 = E45F			SYSVBV			= $E45F
+   245 = E462			XITVB_D			= $E462
+   246 = E462			XITVBV			= $E462
+   247 = 0006			VBI_I			= 6
+   248 = 0007			VBI_D			= 7
+   249 = C0E2			NORMAL_VBI_I	= 49378
+   250 = C28A			NORMAL_VBI_D	= 49802
+   251 = 0222			VVBLKI			= 546
+   252 = 0224			VVBLKD			= 548
+   253 = E462			XITVB			= XITVB_D
+   254
+   255 				;----------------------------------------
+   256 				; Handler vectors:
+   257 				;----------------------------------------
+   258
+   259 = FFFA			NMIH_VECTOR		= 65530
+   260 = FFFC			RESH_VECTOR		= 65532
+   261 = FFFE			IRQH_VECTOR		= 65534
+   262
+   263 				;----------------------------------------
+   264 				; I/O:
+   265 				;----------------------------------------
+   266
+   267 = E456			CIOV			= $E456	; (58454)
+   268 = E459			SIOV			= $E459	; (58457)
+   269
+   270 				;----------------------------------------
+   271 				; Restart routines
+   272 				;----------------------------------------
+   273
+   274 = E474			WARMSV			= $E474
+   275 = E477			COLDSV			= $E477
+   276
+   277 				;----------------------------------------
+   278 				; Bit values:
+   279 				;----------------------------------------
+   280
+   281 				; DMA values
+   282 = 0020			DV_DMA_ON			= %00100000
+   283 = 0010			DV_PM_ONE_LINE		= %00010000
+   284 = 0008			DV_PLAYERS_ON		= %00001000
+   285 = 0004			DV_MISSILES_ON		= %00000100
+   286 = 0003			DV_WIDE_PF			= %00000011
+   287 = 0002			DV_NORMAL_PF		= %00000010
+   288 = 0001			DV_NARROW_PF		= %00000001
+   289
+   290 				; Display list values
+   291 = 0080			DL_DLI_MASK		= %10000000
+   292 = 0040			DL_LMS_MASK		= %01000000
+   293 = 0020			DL_VSCROLL_MASK	= %00100000
+   294 = 0010			DL_HSCROLL_MASK	= %00010000
+   295
+   296 = 0001			DL_JMP		= 1
+   297 = 0041			DL_JVB		= 65
+   298
+   299 = 0000			DL_BLANK_1	= 0
+   300 = 0010			DL_BLANK_2	= 16
+   301 = 0020			DL_BLANK_3	= 32
+   302 = 0030			DL_BLANK_4	= 48
+   303 = 0040			DL_BLANK_5	= 64
+   304 = 0050			DL_BLANK_6	= 80
+   305 = 0060			DL_BLANK_7	= 96
+   306 = 0070			DL_BLANK_8	= 112
+   307
+   308 				; Antic graphic modes
+   309 = 0002			GM_CHAR_A2	= 2			; 2 colors, 40x24, 960b, 40xline, 8 scanlines
+   310 = 0006			GM_CHAR_A6	= 6			; 4 colors, 20x24, 480b, 40xline, 8 scanlines
+   311 = 0007			GM_CHAR_A7	= 7			; 4 colors, 20x12, 240b, 20xline, 16 scanlines
+   312 = 0004			GM_CHAR_A4	= 4			; 5 colors, 40x24, 960b, 40xline, 8 scanlines
+   313 = 0005			GM_CHAR_A5	= 5			; 5 colors, 40x12, 480b, 40xline, 16 scanlines
+   314 = 0003			GM_CHAR_A3	= 3			; 2 colors, 40x24, 760b, 40xline, 10 scanlines
+   315
+   316 				; Basic graphic modes
+   317 = 0002			GM_CHAR_G0	= 2			; 2 colors, 40x24, 960b, 40xline, 8 scanlines
+   318 = 0006			GM_CHAR_G1	= 6			; 4 colors, 20x24, 480b, 40xline, 8 scanlines
+   319 = 0007			GM_CHAR_G2	= 7			; 4 colors, 20x12, 240b, 20xline, 16 scanlines
+   320 = 0004			GM_CHAR_G12	= 4			; 5 colors, 40x24, 960b, 40xline, 8 scanlines
+   321 = 0005			GM_CHAR_G13	= 5			; 5 colors, 40x12, 480b, 40xline, 16 scanlines
+   322
+   323 = 0008			GM_PIXEL_G3	= 8			; 4 colors, 40x24, 240b, 10xline, 8 scanline
+   324 = 0009			GM_PIXEL_G4	= 9			; 2 colors, 80x48, 480b, 10xline, 4 scanline
+   325 = 000A			GM_PIXEL_G5	= 10		; 4 colors, 80x48, 960b, 20xline, 4 scanline
+   326 = 000B			GM_PIXEL_G6	= 11		; 2 colors, 160x96, 1920b, 20xline, 2 scanline
+   327 = 000D			GM_PIXEL_G7	= 13		; 4 colors, 160x96, 3840b, 40xline, 2 scanline
+   328 = 000F			GM_PIXEL_G8	= 15		; 2 colors, 320x192, 7680b, 40xline, 1 scanline
+   329 = 000C			GM_PIXEL_G14	= 12	; 2 colors, 160x192, 3840b, 20xline, 1 scanline
+   330 = 000E			GM_PIXEL_G15	= 14	; 4 colors, 160x192, 7680b, 40xline, 1 scanline
+   331
+   332 = 000F			GM_PIXEL_G9	= 15		; 1 color, 80x192, 7680b, 40xline, 1 scanline
+   333 = 000F			GM_PIXEL_G10	= 15	; 9 colors, 80x192, 7680b, 40xline, 1 scanline
+   334 = 000F			GM_PIXEL_G11	= 15	; 16 colors, 80x192, 7680b, 40xline, 1 scanline
+   335
+   336 				; Prior values
+   337 = 0001			PRV_PM_PRIORITY_1	= %00000001		; p0 p1 p2 p3 / pf0 pf1 pf2 pf3 (p5) / bk
+   338 = 0002			PRV_PM_PRIORITY_2	= %00000010		; p0 p1 / pf0 pf1 pf2 pf3 (p5) / p2 p3 / bk
+   339 = 0004			PRV_PM_PRIORITY_3	= %00000100		; pf0 pf1 pf2 pf3 (p5) /  p0 p1 p2 p3 / bk
+   340 = 0008			PRV_PM_PRIORITY_4	= %00001000		; pf1 pf2 /  p0 p1 p2 p3 / pf0 pf3 (p5) / bk
+   341 = 0010			PRV_FIFTH_PLAYER	= %00010000
+   342 = 0020			PRV_PM_OVERLAP		= %00100000
+   343 = 0040			PRV_GTIA_9			= %01000000
+   344 = 0080			PRV_GTIA_10			= %10000000
+   345 = 00C0			PRV_GTIA_11			= %11000000
+   346
+   347 				; Gractl values
+   348 = 0001			GCTL_MISSILES		= %001
+   349 = 0002			GCTL_PLAYERS		= %010
+   350 = 0004			GCTL_LATCH_TRIGGERS	= %100
+   351
+   352 				; Consol values:
+   353 = 0001			CNV_START_MASK		= %001
+   354 = 0002			CNV_OPTION_MASK		= %010
+   355 = 0004			CNV_SELECT_MASK		= %100
+   356
+   357 				; Stick values:
+   358 = 0008			STV_RIGHT_MASK		= %1000
+   359 = 0004			STV_LEFT_MASK		= %0100
+   360 = 0002			STV_DOWN_MASK		= %0010
+   361 = 0001			STV_UP_MASK			= %0001
+   362
+   363 = 0008			STICK_MASK_RIGHT	= %1000
+   364 = 0004			STICK_MASK_LEFT		= %0100
+   365 = 0002			STICK_MASK_DOWN		= %0010
+   366 = 0001			STICK_MASK_UP		= %0001
+   367
+   368 = 0007			STICK_VALUE_RIGHT	= %0111
+   369 = 000B			STICK_VALUE_LEFT	= %1011
+   370 = 000D			STICK_VALUE_DOWN	= %1101
+   371 = 000E			STICK_VALUE_UP		= %1110
+   372
+   373 				/*
+   374 				KBCode Hexadecimal Values
+   375 				 	$00	$01	$02	$03	$04	$05	$06	$07	$08	$09	$0A	$0B	$0C	$0D	$0E	$0F
+   376 				$00	L	J	;	F1	F2	K	+	*	O	 	P	U	CR	I	-	=
+   377 				$10	V	Hlp	C	F3	F4	B	X	Z	4	 	3	6	Esc	5	2	1
+   378 				$20	,	Spc	.	N	 	M	/	Inv	R	 	E	Y	Tab	T	W	Q
+   379 				$30	9	 	0	7	BS	8	<	>	F	H	D	 	Cap	G	S	A
+   380
+   381 				together with Shift Key: add +$40
+   382 				together with Control key: add +$80 
+   383 				*/
+   383
+     2 				    org $2000
+     3 				    icl '../base/macros.asm'
+Source: macros.asm
+     1 				;*****************************************
+     2 				; macros
+     3 				;*****************************************
+     4 				;
+     5 				;*****************************************
+     6 				; suma bytes
+     7 				;*****************************************
+     8 				.macro suma
+     9 					.if :0 <> 2
+    10 						.error "Suma error"
+    11 					.else
+    12 						clc
+    13 						lda :1
+    14 						adc #:2
+    15 						sta :1
+    16 						lda :1+1
+    17 						adc #$00
+    18 						sta :1+1
+    19 					.endif
+    20 				.endm
+    21 				;*****************************************
+    22 				; suma variables
+    23 				;*****************************************
+    24 				.macro sumav
+    25 					.if :0 <> 2
+    26 						.error "Suma error"
+    27 					.else
+    28 						clc
+    29 						lda :1
+    30 						adc :2
+    31 						sta :1
+    32 						lda :1+1
+    33 						adc #$00
+    34 						sta :1+1
+    35 					.endif
+    36 				.endm
+    37 				;*****************************************
+    38 				; cargo data a titulo
+    39 				;*****************************************
+    40 				.macro titulo
+    41 					ldx #19
+    42 				mtitulo01
+    43 					lda :1,x
+    44 					sta showtitulo2,x
+    45 					dex
+    46 					bpl mtitulo01
+    47 					jsr funtitulo
+    48 				.endm
+    49
+    50 				.macro texto
+    51 					jsr funtexto
+    52 				.endm
+    53
+    54 				.macro start
+    55 					jsr funstart
+    56 				.endm
+    57
+    58 				.macro pausa
+    59 					.if :0 <> 1
+    60 						.error "Pausa error"
+    61 					.else
+    62 						ldx #:1
+    63 						jsr funpausa	
+    64 					.endif
+    65 				.endm
+    66
+    67 				.macro poke
+    68 					.if :0 <> 2
+    69 						.error "Poke error"
+    70 					.else
+    71 						lda #:2
+    72 						sta :1	
+    73 					.endif
+    74 				.endm
+    75 				.macro fsk
+    76 					jsr funfsk
+    77 				.endm
+     4 				    icl '../base/pantallas.asm'
+Source: pantallas.asm
+     1 				;display list portada principal
+     2 				;dibujo principal portada del curso
+     3 				dliportada
+     4 FFFF> 2000-3CD8> 70 70 + :3	.by $70
+     5 2003 4D				.by $4d
+     6 2004 2F 20			.wo showportada
+     7 2006 0D 0D 0D 0D 0D 0D + :22	.by $0d
+     8 201C 70 70 70		:3	.by $70
+     9 201F 06				.by $06
+    10 2020 70 70 70 70		:4	.by $70
+    11 2024 02 02 02		:3	.by $02
+    12 2027 70 70 70 70		:4	.by $70
+    13 202B 06				.by $06
+    14 202C 41				.by $41
+    15 202D 00 20			.wo dliportada
+    16 				;datos de portada
+    17 202F			showportada
+    18 202F 00 00 00 00 00 01 +     .by $00,$00,$00,$00,$00,$01,$55,$50,$01,$55,$55,$40,$55,$55,$54,$01,$55,$55,$15,$40,$05,$51,$55,$55,$40,$15,$40,$00,$00,$05,$55,$54,$15,$55,$54,$00,$00,$00,$00,$00
+    19 2057 00 00 00 00 00 01 + 	.by $00,$00,$00,$00,$00,$01,$AA,$A0,$02,$AA,$AA,$80,$6A,$AA,$A8,$01,$AA,$AA,$1A,$80,$0A,$A1,$AA,$AA,$80,$1A,$80,$00,$00,$06,$AA,$A8,$1A,$AA,$A8,$00,$00,$00,$00,$00
+    20 207F 00 00 00 00 00 00 +     .by $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+    21 20A7 00 00 00 00 00 1A +     .by $00,$00,$00,$00,$00,$1A,$AA,$AA,$1A,$AA,$AA,$86,$AA,$AA,$A8,$6A,$AA,$AA,$1A,$A8,$AA,$A1,$AA,$AA,$AA,$1A,$80,$00,$00,$6A,$AA,$A8,$1A,$AA,$AA,$80,$00,$00,$00,$00
+    22 20CF 00 00 00 00 00 1A +     .by $00,$00,$00,$00,$00,$1A,$AA,$AA,$1A,$AA,$AA,$86,$AA,$AA,$A8,$6A,$AA,$AA,$1A,$A8,$AA,$A1,$AA,$AA,$AA,$1A,$80,$00,$00,$6A,$AA,$A8,$1A,$AA,$AA,$80,$00,$00,$00,$00
+    23 20F7 00 00 00 00 00 00 +     .by $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$28,$00,$00,$00,$00,$00,$00,$00,$00
+    24 211F 00 00 00 00 00 1A +     .by $00,$00,$00,$00,$00,$1A,$80,$AA,$1A,$80,$00,$06,$A8,$00,$00,$6A,$00,$00,$1A,$AA,$AA,$A1,$A8,$00,$AA,$1A,$80,$00,$00,$6A,$00,$00,$1A,$80,$2A,$80,$00,$00,$00,$00
+    25 2147 00 00 00 00 00 1A +     .by $00,$00,$00,$00,$00,$1A,$80,$AA,$1A,$80,$00,$06,$A8,$00,$00,$6A,$00,$00,$1A,$AA,$AA,$A1,$A8,$00,$AA,$1A,$80,$00,$00,$6A,$00,$00,$1A,$80,$2A,$80,$00,$00,$00,$00
+    26 216F 00 00 00 00 00 00 +     .by $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+    27 2197 00 00 00 00 00 1A +     .by $00,$00,$00,$00,$00,$1A,$AA,$AA,$1A,$AA,$A0,$06,$AA,$AA,$00,$6A,$AA,$A0,$1A,$AA,$AA,$A1,$AA,$AA,$A0,$1A,$80,$00,$00,$6A,$AA,$80,$1A,$AA,$AA,$80,$00,$00,$00,$00
+    28 21BF 00 00 00 00 00 1A +     .by $00,$00,$00,$00,$00,$1A,$AA,$AA,$1A,$AA,$A0,$06,$AA,$AA,$00,$6A,$AA,$A0,$1A,$AA,$AA,$A1,$AA,$AA,$A0,$1A,$80,$00,$00,$6A,$AA,$80,$1A,$AA,$AA,$80,$00,$00,$00,$00
+    29 21E7 00 00 00 00 00 00 +     .by $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+    30 220F 00 00 00 00 00 1A +     .by $00,$00,$00,$00,$00,$1A,$AA,$AA,$02,$AA,$AA,$80,$2A,$AA,$A8,$6A,$AA,$A0,$1A,$8A,$8A,$A1,$AA,$AA,$A0,$1A,$80,$00,$00,$6A,$AA,$80,$1A,$AA,$A8,$00,$00,$00,$00,$00
+    31 2237 00 00 00 00 00 1A +     .by $00,$00,$00,$00,$00,$1A,$AA,$AA,$02,$AA,$AA,$80,$2A,$AA,$A8,$6A,$AA,$A0,$1A,$8A,$8A,$A1,$AA,$AA,$A0,$1A,$80,$00,$00,$6A,$AA,$80,$1A,$AA,$A8,$00,$00,$00,$00,$00
+    32 225F 00 00 00 00 00 00 +     .by $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+    33 2287 00 00 00 00 00 1A +     .by $00,$00,$00,$00,$00,$1A,$80,$AA,$00,$00,$0A,$80,$00,$00,$A8,$6A,$00,$00,$1A,$80,$0A,$A1,$A8,$00,$AA,$16,$80,$00,$00,$6A,$00,$00,$1A,$82,$AA,$80,$00,$00,$00,$00
+    34 22AF 00 00 00 00 00 1A +     .by $00,$00,$00,$00,$00,$1A,$80,$AA,$00,$00,$0A,$80,$00,$00,$A8,$6A,$00,$00,$1A,$80,$0A,$A1,$A8,$00,$AA,$16,$80,$00,$00,$6A,$00,$00,$1A,$82,$AA,$80,$00,$00,$00,$00
+    35 22D7 00 00 00 00 00 00 +     .by $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+    36 22FF 00 00 00 00 00 1A +     .by $00,$00,$00,$00,$00,$1A,$80,$AA,$1A,$AA,$AA,$86,$AA,$AA,$A8,$6A,$AA,$AA,$1A,$80,$0A,$A1,$AA,$AA,$AA,$1A,$AA,$AA,$A8,$6A,$AA,$A8,$1A,$80,$2A,$80,$00,$00,$00,$00
+    37 2327 00 00 00 00 00 1A +     .by $00,$00,$00,$00,$00,$1A,$80,$AA,$1A,$AA,$AA,$86,$AA,$AA,$A8,$6A,$AA,$AA,$1A,$80,$0A,$A1,$AA,$AA,$AA,$1A,$AA,$AA,$A8,$6A,$AA,$A8,$1A,$80,$2A,$80,$00,$00,$00,$00
+    38 234F 00 00 00 00 00 00 +     .by $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+    39 2377 00 00 00 00 00 1A +     .by $00,$00,$00,$00,$00,$1A,$80,$AA,$1A,$AA,$A8,$06,$AA,$AA,$00,$06,$AA,$AA,$1A,$80,$0A,$A1,$AA,$AA,$A0,$02,$AA,$AA,$A8,$06,$AA,$A8,$1A,$80,$2A,$80,$00,$00,$00,$00
+    40 239F 00 00 00 00 00 1A +     .by $00,$00,$00,$00,$00,$1A,$80,$AA,$15,$55,$54,$05,$55,$55,$00,$05,$55,$55,$15,$40,$05,$51,$55,$55,$50,$01,$55,$55,$54,$05,$55,$54,$15,$40,$15,$40,$00,$00,$00,$00
+    41 23C7 00			    .sb " "
+    42 23C8 E4 EF E7 E4 E1 F2 +     .sb +128,"dogdark"
+    43 23CF 00 00		    .sb "  "
+    44 23D1 33 2F 26 34 37 21 +     .sb +192,"softwares"
+    45 23DA 00			    .sb " "
+    46 23DB 51 52 52 52 52 52 +     .sb +32,"QRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRE"
+    47 2403 7C 00 00 30 32 2F +     .sb "|  PROGRAMAS EDUCACIONALES PARA ATARI  |"
+    48 242B 5A 52 52 52 52 52 +     .sb +32,"ZRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRC"
+    49 2453 C0 C0 CE E2 F9 C0 +     .sb +192,"  .BY DOGDARK 2022  " ;64
+    50 2467			portada
+    51 2467 A9 00			lda #<dliportada
+    52 2469 8D 30 02			sta $230
+    53 246C A9 20			lda #>dliportada
+    54 246E 8D 31 02			sta $231
+    55 2471			    poke 708,148
+Macro: POKE [Source: macros.asm]
+     4 2471 A9 94				lda #148
+     5 2473 8D C4 02				sta 708	
+Source: pantallas.asm
+    56 2476				poke 709,152
+Macro: POKE [Source: macros.asm]
+     4 2476 A9 98				lda #152
+     5 2478 8D C5 02				sta 709	
+Source: pantallas.asm
+    57 247B				poke 710,0
+Macro: POKE [Source: macros.asm]
+     4 247B A9 00				lda #0
+     5 247D 8D C6 02				sta 710	
+Source: pantallas.asm
+    58 				;
+    59 2480 A9 08			lda #$08	//color player 1
+    60 2482 8D C0 02			sta pcolr0
+    61 					
+    62 2485 A9 00			lda #$00
+    63 2487 A0 02			ldy #$02
+    64 2489 91 58			sta ($58),y
+    65 248B 8D C6 02			sta color2
+    66 				;
+    67 248E A9 00			lda #$00	//prioridad player
+    68 2490 8D 6F 02			sta gprior
+    69 				;
+    70 2493 A9 00			lda #$00
+    71 2495 8D 08 D0			sta sizep0	//size player 0
+    72 				;
+    73 2498 A9 01			lda #$01
+    74 249A 8D 0D D0			sta grafp0	// grafico 0	
+    75
+    76 249D A9 00			lda #$00
+    77 249F 8D 00 D0			sta hposp0
+    78
+    79 24A2 A2 00			ldx #$00
+    80 24A4			loop0
+    81 24A4 AD 0A D2			lda random	//rtclock
+    82 24A7 9D D8 3C			sta tablap0,x
+    83 24AA E8				inx
+    84 24AB D0 F7			bne loop0
+    85 24AD			loop
+    86 24AD			    poke 77,0
+Macro: POKE [Source: macros.asm]
+     4 24AD A9 00				lda #0
+     5 24AF 85 4D				sta 77	
+Source: pantallas.asm
+    87 24B1 AD 0B D4			lda vcount
+    88 24B4 C9 05			cmp #$05
+    89 24B6 D0 02			bne no5
+    90 24B8 A2 00			ldx #$00
+    91 24BA			no5
+    92 24BA A5 14			lda rtclock
+    93 24BC 18				clc
+    94 24BD 7D D8 3C			adc tablap0,x
+    95 24C0 A8				tay
+    96 24C1 8C 0A D4			sty wsync
+    97 24C4 8C 00 D0			sty hposp0
+    98 24C7 E8				inx
+    99 				;
+   100 					;start
+   101 24C8 AD 0F D2			lda skstat
+   102 24CB 29 10			and #$10
+   103 24CD D0 DE			bne loop
+   104 24CF			finloop
+   105 24CF A9 00			lda #$00
+   106 24D1 8D 00 D0			sta hposp0
+   107 24D4 60				rts
+   108 				;
+   109 				;display list texto
+   110 24D5			dlitexto
+   111 24D5 70 70 70		:3  .by $70
+   112 24D8 4E			    .by $4e
+   113 24D9 FC 24		    .wo showlogo
+   114 24DB 0E 0E 0E 0E 0E 0E + :8  .by $0e
+   115 24E3 70 70		:2  .by $70
+   116 24E5 02 02 02 02 02 02 + :20 .by $02
+   117 24F9 41			    .by $41
+   118 24FA D5 24		    .wo dlitexto
+   119 				;datos de logo
+   120 24FC			showlogo
+   121 24FC 00 00 00 00 00 00 +     .by $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$15,$40,$55,$41,$55,$05,$50,$10,$41,$55,$01,$40,$05,$50,$55,$40,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+   122 2524 00 00 00 00 00 00 +     .by $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$51,$51,$50,$05,$40,$15,$54,$51,$50,$41,$05,$40,$15,$54,$10,$50,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+   123 254C 00 00 00 00 00 00 +     .by $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$50,$51,$50,$05,$40,$14,$00,$55,$50,$55,$45,$40,$14,$00,$11,$50,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+   124 2574 00 00 00 00 00 00 +     .by $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$55,$50,$55,$41,$55,$15,$54,$44,$50,$51,$45,$40,$15,$54,$15,$40,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+   125 259C 00 00 00 00 00 00 +     .by $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$40,$50,$01,$40,$05,$15,$00,$40,$50,$41,$45,$40,$15,$00,$11,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+   126 25C4 00 00 00 00 00 00 +     .by $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$40,$50,$01,$40,$05,$15,$00,$40,$51,$55,$45,$54,$15,$00,$10,$40,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+   127 25EC 00 00 00 00 00 00 +     .by $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$40,$51,$55,$05,$54,$05,$54,$40,$51,$55,$01,$55,$05,$54,$10,$10,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+   128 2614 00 00 00 00 00 00 + :40 .by $00
+   129 263C 55 55 55 55 55 55 +     .by $55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55
+   130 2664			showtexto
+   131 				;:20     .sb "                                        "
+   132 2664 0A 0A 0A 0A 0A 0A + :19 .sb "****************************************"
+   133 295C			showmensaje
+   134 295C 0A 0A 0A 0A 0A 0A +     .sb "*************************************fin"
+   135 2984			funtexto
+   136 2984			    poke 54018,52
+Macro: POKE [Source: macros.asm]
+     4 2984 A9 34				lda #52
+     5 2986 8D 02 D3				sta 54018	
+Source: pantallas.asm
+   137 2989 20 50 2B		    jsr limpiotexto
+   138 298C A9 D5		    lda #<dlitexto
+   139 298E 8D 30 02		    sta $230
+   140 2991 A9 24		    lda #>dlitexto
+   141 2993 8D 31 02		    sta $231
+   142 2996 A9 40		    lda #$40
+   143 2998 8D C6 02		    sta 710
+   144 299B 8D C8 02		    sta 712
+   145 				; iniciamos puntero de data de show
+   146 299E A9 64		    lda #<showtexto
+   147 29A0 85 CB		    sta pt
+   148 29A2 A9 26		    lda #>showtexto
+   149 29A4 85 CC		    sta pt+1
+   150 29A6 A0 00		    ldy #0
+   151 29A8 8C CB 2B		    sty tmp
+   152 29AB 8C CC 2B		    sty tmp+1
+   153 29AE			texto01
+   154 29AE B1 80		    lda (ptdata),y
+   155 29B0 8D CB 2B		    sta tmp
+   156 29B3			    suma ptdata,1
+Macro: SUMA [Source: macros.asm]
+     4 29B3 18					clc
+     5 29B4 A5 80				lda PTDATA
+     6 29B6 69 01				adc #1
+     7 29B8 85 80				sta PTDATA
+     8 29BA A5 81				lda PTDATA+1
+     9 29BC 69 00				adc #$00
+    10 29BE 85 81				sta PTDATA+1
+Source: pantallas.asm
+   157 29C0			    sumav pt,tmp
+Macro: SUMAV [Source: macros.asm]
+     4 29C0 18					clc
+     5 29C1 A5 CB				lda PT
+     6 29C3 6D CB 2B				adc TMP
+     7 29C6 85 CB				sta PT
+     8 29C8 A5 CC				lda PT+1
+     9 29CA 69 00				adc #$00
+    10 29CC 85 CC				sta PT+1
+Source: pantallas.asm
+   158 29CE 91 CB		    sta (pt),y
+   159 29D0			texto02
+   160 29D0			    poke 77,0
+Macro: POKE [Source: macros.asm]
+     4 29D0 A9 00				lda #0
+     5 29D2 85 4D				sta 77	
+Source: pantallas.asm
+   161 29D4 B1 80		    lda (ptdata),y
+   162 29D6 91 CB		    sta (pt),y
+   163 29D8			    suma ptdata,1
+Macro: SUMA [Source: macros.asm]
+     4 29D8 18					clc
+     5 29D9 A5 80				lda PTDATA
+     6 29DB 69 01				adc #1
+     7 29DD 85 80				sta PTDATA
+     8 29DF A5 81				lda PTDATA+1
+     9 29E1 69 00				adc #$00
+    10 29E3 85 81				sta PTDATA+1
+Source: pantallas.asm
+   164 29E5			    suma pt,1
+Macro: SUMA [Source: macros.asm]
+     4 29E5 18					clc
+     5 29E6 A5 CB				lda PT
+     6 29E8 69 01				adc #1
+     7 29EA 85 CB				sta PT
+     8 29EC A5 CC				lda PT+1
+     9 29EE 69 00				adc #$00
+    10 29F0 85 CC				sta PT+1
+Source: pantallas.asm
+   165 				    
+   166 29F2 A2 03		    ldx #3
+   167 29F4			    pausa 3
+Macro: PAUSA [Source: macros.asm]
+     4 29F4 A2 03				ldx #3
+     5 29F6 20 A5 2B				jsr funpausa	
+Source: pantallas.asm
+   168
+   169 29F9 B1 80		    lda (ptdata),y
+   170 29FB C9 FF		    cmp #$ff
+   171 29FD F0 1E		    beq fintexto
+   172
+   173 29FF C9 9C		    cmp #$9c
+   174 2A01 F0 14		    beq textofsk
+   175
+   176 2A03 C9 9B		    cmp #$9b
+   177 2A05 D0 C9		    bne texto02
+   178 2A07			textosigo
+   179 2A07			    suma ptdata,1
+Macro: SUMA [Source: macros.asm]
+     4 2A07 18					clc
+     5 2A08 A5 80				lda PTDATA
+     6 2A0A 69 01				adc #1
+     7 2A0C 85 80				sta PTDATA
+     8 2A0E A5 81				lda PTDATA+1
+     9 2A10 69 00				adc #$00
+    10 2A12 85 81				sta PTDATA+1
+Source: pantallas.asm
+   180 2A14 4C AE 29		    jmp texto01
+   181 2A17			textofsk
+   182 2A17			    fsk
+Macro: FSK [Source: macros.asm]
+     1 2A17 20 AE 2B			jsr funfsk
+Source: pantallas.asm
+   183 2A1A 4C 07 2A		    jmp textosigo
+   184 2A1D			fintexto
+   185 2A1D			    suma ptdata,1
+Macro: SUMA [Source: macros.asm]
+     4 2A1D 18					clc
+     5 2A1E A5 80				lda PTDATA
+     6 2A20 69 01				adc #1
+     7 2A22 85 80				sta PTDATA
+     8 2A24 A5 81				lda PTDATA+1
+     9 2A26 69 00				adc #$00
+    10 2A28 85 81				sta PTDATA+1
+Source: pantallas.asm
+   186 2A2A 60			    rts
+   187 2A2B			txtstart
+   188 2A2B 00 00 00 00 30 32 +     .sb "    PRESIONE "
+   189 2A38 80 B3 B4 A1 B2 B4 +     .sb +128," START "
+   190 2A3F 00 30 21 32 21 00 +     .sb " PARA CONTINUAR.    "
+   191 				;*****************************************
+   192 				; pantalla titulos
+   193 				;*****************************************
+   194 2A53			dlititulo
+   195 2A53 70 70 70		:3	.by $70
+   196 2A56 46				.by $46
+   197 2A57 71 2A			.wo showtitulo
+   198 2A59 70 70 70 70 70 70 + :10	.by $70
+   199 2A63 06				.by $06
+   200 2A64 70 70 70 70 70 70 + :9	.by $70
+   201 2A6D 02				.by $02
+   202 2A6E 41				.by $41
+   203 2A6F 53 2A			.wo dlititulo
+   204 2A71			showtitulo
+   205 2A71 00				.sb " "
+   206 2A72 E4 EF E7 E4 E1 F2 + 	.sb +128,"dogdark"
+   207 2A79 00 00 73 6F 66 74 + 	.sb "  softwares "
+   208 2A85			showtitulo2
+   209 2A85 0D 0D 21 23 21 00 + 	.sb "--ACA VA EL TITULO--"
+   210 2A99 00 00 30 72 6F 67 + 	.sb "  Programas educacionales Dogdark 2022  "
+   211 					;.sb "                                        "
+   212 2AC1			funtitulo
+   213 2AC1			    poke 54018,52
+Macro: POKE [Source: macros.asm]
+     4 2AC1 A9 34				lda #52
+     5 2AC3 8D 02 D3				sta 54018	
+Source: pantallas.asm
+   214 2AC6 A9 53			lda #<dlititulo
+   215 2AC8 8D 30 02			sta $230
+   216 2ACB A9 2A			lda #>dlititulo
+   217 2ACD 8D 31 02			sta $231
+   218 2AD0 20 B6 2B			jsr resetcolor
+   219 2AD3			    poke 710,0
+Macro: POKE [Source: macros.asm]
+     4 2AD3 A9 00				lda #0
+     5 2AD5 8D C6 02				sta 710	
+Source: pantallas.asm
+   220 2AD8			    poke 77,0
+Macro: POKE [Source: macros.asm]
+     4 2AD8 A9 00				lda #0
+     5 2ADA 85 4D				sta 77	
+Source: pantallas.asm
+   221 2ADC				pausa 100
+Macro: PAUSA [Source: macros.asm]
+     4 2ADC A2 64				ldx #100
+     5 2ADE 20 A5 2B				jsr funpausa	
+Source: pantallas.asm
+   222 2AE1			    fsk
+Macro: FSK [Source: macros.asm]
+     1 2AE1 20 AE 2B			jsr funfsk
+Source: pantallas.asm
+   223 				    ;start
+   224 2AE4 60				rts
+   225 2AE5			dlifin
+   226 2AE5 70 70 70 70 70 70 + :10 .by $70
+   227 2AEF 42			    .by $42
+   228 2AF0 F5 2A		    .wo showfin
+   229 2AF2 41			    .by $41
+   230 2AF3 E5 2A		    .wo dlifin
+   231 2AF5			showfin
+   232 2AF5 00 00 00 00 30 32 +     .sb "    PRESIONE "
+   233 2B02 80 B2 A5 B3 A5 B4 +     .sb +128," RESET "
+   234 2B09 00 30 21 32 21 00 +     .sb " PARA CONTINUAR.    "
+   235 2B1D			pfin
+   236 2B1D A9 E5		    lda #<dlifin
+   237 2B1F 8D 30 02		    sta $230
+   238 2B22 A9 2A		    lda #>dlifin
+   239 2B24 8D 31 02		    sta $231
+   240 2B27			    poke 710,0
+Macro: POKE [Source: macros.asm]
+     4 2B27 A9 00				lda #0
+     5 2B29 8D C6 02				sta 710	
+Source: pantallas.asm
+   241 2B2C			    poke 712,0
+Macro: POKE [Source: macros.asm]
+     4 2B2C A9 00				lda #0
+     5 2B2E 8D C8 02				sta 712	
+Source: pantallas.asm
+   242 2B31			    poke 709,12
+Macro: POKE [Source: macros.asm]
+     4 2B31 A9 0C				lda #12
+     5 2B33 8D C5 02				sta 709	
+Source: pantallas.asm
+   243 2B36 60			    rts
+     5 2B37			    icl '../base/funciones.asm'
+Source: funciones.asm
+     1 				;presiona start
+     2 2B37			funstart
+     3 2B37			    poke 77,0
+Macro: POKE [Source: macros.asm]
+     4 2B37 A9 00				lda #0
+     5 2B39 85 4D				sta 77	
+Source: funciones.asm
+     4 2B3B AD 1F D0		    lda 53279
+     5 2B3E C9 06		    cmp #6
+     6 2B40 D0 F5		    bne funstart
+     7 2B42			start01
+     8 2B42			    poke 77,0
+Macro: POKE [Source: macros.asm]
+     4 2B42 A9 00				lda #0
+     5 2B44 85 4D				sta 77	
+Source: funciones.asm
+     9 2B46 AD 1F D0		    lda 53279
+    10 2B49 C9 06		    cmp #6
+    11 2B4B F0 F5		    beq start01
+    12 2B4D 60			    rts
+    13 				;presiona option
+    14 2B4E			select
+    15
+    16 2B4E 60			    rts
+    17 				;presiona select
+    18 2B4F			option
+    19
+    20 2B4F 60			    rts
+    21 2B50			limpiotexto
+    22 2B50 A9 64		    lda #<showtexto
+    23 2B52 85 CB		    sta pt
+    24 2B54 A9 26		    lda #>showtexto
+    25 2B56 85 CC		    sta pt+1
+    26 2B58 A0 00		    ldy #0
+    27 2B5A 8C CB 2B		    sty tmp
+    28 2B5D 8C CC 2B		    sty tmp+1
+    29 2B60			limpiotexto01
+    30 2B60 A9 00		    lda #$00
+    31 2B62 91 CB		    sta (pt),y
+    32 2B64			    suma pt,1
+Macro: SUMA [Source: macros.asm]
+     4 2B64 18					clc
+     5 2B65 A5 CB				lda PT
+     6 2B67 69 01				adc #1
+     7 2B69 85 CB				sta PT
+     8 2B6B A5 CC				lda PT+1
+     9 2B6D 69 00				adc #$00
+    10 2B6F 85 CC				sta PT+1
+Source: funciones.asm
+    33 2B71			    suma tmp,1
+Macro: SUMA [Source: macros.asm]
+     4 2B71 18					clc
+     5 2B72 AD CB 2B				lda TMP
+     6 2B75 69 01				adc #1
+     7 2B77 8D CB 2B				sta TMP
+     8 2B7A AD CC 2B				lda TMP+1
+     9 2B7D 69 00				adc #$00
+    10 2B7F 8D CC 2B				sta TMP+1
+Source: funciones.asm
+    34 2B82 AD CB 2B		    lda tmp
+    35 2B85 C9 20		    cmp #32
+    36 2B87 D0 D7		    bne limpiotexto01
+    37 2B89 AD CC 2B		    lda tmp+1
+    38 2B8C C9 03		    cmp #3
+    39 2B8E D0 D0		    bne limpiotexto01
+    40 2B90 60			    rts
+    41 				;muestro start en pantalla y esperamos
+    42 				;que presionen start
+    43 2B91			mstart
+    44 2B91 A2 27		    ldx #39
+    45 2B93			mstart01
+    46 2B93 BD 2B 2A		    lda txtstart,x
+    47 2B96 9D 5C 29		    sta showmensaje,x
+    48 2B99 CA			    dex
+    49 2B9A 10 F7		    bpl mstart01
+    50 2B9C			    poke 54018,60
+Macro: POKE [Source: macros.asm]
+     4 2B9C A9 3C				lda #60
+     5 2B9E 8D 02 D3				sta 54018	
+Source: funciones.asm
+    51 2BA1			    start
+Macro: START [Source: macros.asm]
+     1 2BA1 20 37 2B			jsr funstart
+Source: funciones.asm
+    52 2BA4 60			    rts
+    53 2BA5			funpausa
+    54 2BA5 8E 1C 02		    stx $021c
+    55 2BA8			pausa01
+    56 2BA8 AE 1C 02		    ldx $021c
+    57 2BAB D0 FB		    bne pausa01
+    58 2BAD 60			    rts
+    59 				;funcion espero fsk
+    60 2BAE			funfsk
+    61 2BAE AD 0F D2			lda $d20f   ;53775
+    62 2BB1 29 10			and #$10
+    63 2BB3 D0 F9			bne funfsk
+    64 2BB5 60				rts
+    65 				;*****************************************
+    66 				; reseteo de colores
+    67 				;*****************************************
+    68 2BB6			resetcolor
+    69 				;color 0
+    70 2BB6 A9 28			lda #$28
+    71 2BB8 8D C4 02			sta $2c4    ;color0
+    72 				;color 1
+    73 2BBB A9 CA			lda #$ca
+    74 2BBD 8D C5 02			sta $2c5    ;color1
+    75 				;color 2
+    76 2BC0 A9 94			lda #$94
+    77 2BC2 8D C6 02			sta $2c6    ;color2
+    78 				;color 4
+    79 2BC5 A9 00			lda #$00
+    80 2BC7 8D C8 02			sta $2c8    ;color4
+    81 2BCA 60				rts
+     6 2BCB 00 00 00		tmp .by 0,0,0
+     7 2BCE			inicio
+     8 				;iniciamos motor
+     9 2BCE			    poke 559,0
+Macro: POKE [Source: macros.asm]
+     4 2BCE A9 00				lda #0
+     5 2BD0 8D 2F 02				sta 559	
+Source: curso01.asm
+    10 2BD3			    poke 54018,52
+Macro: POKE [Source: macros.asm]
+     4 2BD3 A9 34				lda #52
+     5 2BD5 8D 02 D3				sta 54018	
+Source: curso01.asm
+    11 2BD8			    pausa 100
+Macro: PAUSA [Source: macros.asm]
+     4 2BD8 A2 64				ldx #100
+     5 2BDA 20 A5 2B				jsr funpausa	
+Source: curso01.asm
+    12 				;iniciamos puntero de data
+    13 2BDD A9 C6		    lda #<showdata
+    14 2BDF 85 80		    sta ptdata
+    15 2BE1 A9 2D		    lda #>showdata
+    16 2BE3 85 81		    sta ptdata+1
+    17 				;iniciamos pantalla principal
+    18 2BE5			    poke 559,34
+Macro: POKE [Source: macros.asm]
+     4 2BE5 A9 22				lda #34
+     5 2BE7 8D 2F 02				sta 559	
+Source: curso01.asm
+    19 2BEA 20 67 24		    jsr portada
+    20 				;pantalla titulo introducción
+    21 2BED			    titulo introduccion
+Macro: TITULO [Source: macros.asm]
+     1 2BED A2 13			ldx #19
+     2 2BEF			mtitulo01
+     3 2BEF BD 26 2D			lda INTRODUCCION,x
+     4 2BF2 9D 85 2A			sta showtitulo2,x
+     5 2BF5 CA				dex
+     6 2BF6 10 F7			bpl mtitulo01
+     7 2BF8 20 C1 2A			jsr funtitulo
+Source: curso01.asm
+    22 				;pantalla de texto introducción
+    23 2BFB			    texto
+Macro: TEXTO [Source: macros.asm]
+     1 2BFB 20 84 29			jsr funtexto
+Source: curso01.asm
+    24 2BFE			    fsk
+Macro: FSK [Source: macros.asm]
+     1 2BFE 20 AE 2B			jsr funfsk
+Source: curso01.asm
+    25 				    ;start
+    26 				;pantalla titulo temario
+    27 2C01			    titulo temario
+Macro: TITULO [Source: macros.asm]
+     1 2C01 A2 13			ldx #19
+     2 2C03			mtitulo01
+     3 2C03 BD 3A 2D			lda TEMARIO,x
+     4 2C06 9D 85 2A			sta showtitulo2,x
+     5 2C09 CA				dex
+     6 2C0A 10 F7			bpl mtitulo01
+     7 2C0C 20 C1 2A			jsr funtitulo
+Source: curso01.asm
+    28 				;pantalla de temario del curso
+    29 2C0F			    texto
+Macro: TEXTO [Source: macros.asm]
+     1 2C0F 20 84 29			jsr funtexto
+Source: curso01.asm
+    30 2C12			    fsk
+Macro: FSK [Source: macros.asm]
+     1 2C12 20 AE 2B			jsr funfsk
+Source: curso01.asm
+    31 2C15 20 91 2B		    jsr mstart
+    32 				;pantalla titulo conociendo el atari
+    33 2C18			    titulo title01
+Macro: TITULO [Source: macros.asm]
+     1 2C18 A2 13			ldx #19
+     2 2C1A			mtitulo01
+     3 2C1A BD 4E 2D			lda TITLE01,x
+     4 2C1D 9D 85 2A			sta showtitulo2,x
+     5 2C20 CA				dex
+     6 2C21 10 F7			bpl mtitulo01
+     7 2C23 20 C1 2A			jsr funtitulo
+Source: curso01.asm
+    34 				;pantalla texto conociendo el atari
+    35 2C26			    texto
+Macro: TEXTO [Source: macros.asm]
+     1 2C26 20 84 29			jsr funtexto
+Source: curso01.asm
+    36 2C29			    fsk
+Macro: FSK [Source: macros.asm]
+     1 2C29 20 AE 2B			jsr funfsk
+Source: curso01.asm
+    37 				;pantalla titulo memoria rom
+    38 2C2C			    titulo title02
+Macro: TITULO [Source: macros.asm]
+     1 2C2C A2 13			ldx #19
+     2 2C2E			mtitulo01
+     3 2C2E BD 62 2D			lda TITLE02,x
+     4 2C31 9D 85 2A			sta showtitulo2,x
+     5 2C34 CA				dex
+     6 2C35 10 F7			bpl mtitulo01
+     7 2C37 20 C1 2A			jsr funtitulo
+Source: curso01.asm
+    39 				;texto memoria rom
+    40 2C3A			    texto
+Macro: TEXTO [Source: macros.asm]
+     1 2C3A 20 84 29			jsr funtexto
+Source: curso01.asm
+    41 2C3D			    fsk
+Macro: FSK [Source: macros.asm]
+     1 2C3D 20 AE 2B			jsr funfsk
+Source: curso01.asm
+    42 2C40 20 91 2B		    jsr mstart
+    43 				;pantalla titulo memoria ram
+    44 2C43			    titulo title03
+Macro: TITULO [Source: macros.asm]
+     1 2C43 A2 13			ldx #19
+     2 2C45			mtitulo01
+     3 2C45 BD 76 2D			lda TITLE03,x
+     4 2C48 9D 85 2A			sta showtitulo2,x
+     5 2C4B CA				dex
+     6 2C4C 10 F7			bpl mtitulo01
+     7 2C4E 20 C1 2A			jsr funtitulo
+Source: curso01.asm
+    45 				;texto memoria ram
+    46 2C51			    texto
+Macro: TEXTO [Source: macros.asm]
+     1 2C51 20 84 29			jsr funtexto
+Source: curso01.asm
+    47 2C54			    fsk
+Macro: FSK [Source: macros.asm]
+     1 2C54 20 AE 2B			jsr funfsk
+Source: curso01.asm
+    48 2C57 20 91 2B		    jsr mstart
+    49 				;titulo interior de una memoria
+    50 2C5A			    titulo title04
+Macro: TITULO [Source: macros.asm]
+     1 2C5A A2 13			ldx #19
+     2 2C5C			mtitulo01
+     3 2C5C BD 8A 2D			lda TITLE04,x
+     4 2C5F 9D 85 2A			sta showtitulo2,x
+     5 2C62 CA				dex
+     6 2C63 10 F7			bpl mtitulo01
+     7 2C65 20 C1 2A			jsr funtitulo
+Source: curso01.asm
+    51 				;texto interior de una memoria
+    52 2C68			    texto
+Macro: TEXTO [Source: macros.asm]
+     1 2C68 20 84 29			jsr funtexto
+Source: curso01.asm
+    53 2C6B			    fsk
+Macro: FSK [Source: macros.asm]
+     1 2C6B 20 AE 2B			jsr funfsk
+Source: curso01.asm
+    54 				    ;00
+    55 2C6E A9 10		    lda #16
+    56 2C70 8D D0 27		    sta showtexto+364
+    57 2C73 A9 10		    lda #16
+    58 2C75 8D D1 27		    sta showtexto+365
+    59 2C78			    pausa 50
+Macro: PAUSA [Source: macros.asm]
+     4 2C78 A2 32				ldx #50
+     5 2C7A 20 A5 2B				jsr funpausa	
+Source: curso01.asm
+    60 2C7D			    fsk
+Macro: FSK [Source: macros.asm]
+     1 2C7D 20 AE 2B			jsr funfsk
+Source: curso01.asm
+    61 				    ;start
+    62 				    ;B3
+    63 2C80 A9 22		    lda #34
+    64 2C82 8D D9 27		    sta showtexto+373
+    65 2C85 A9 13		    lda #19
+    66 2C87 8D DA 27		    sta showtexto+374
+    67 2C8A			    pausa 50
+Macro: PAUSA [Source: macros.asm]
+     4 2C8A A2 32				ldx #50
+     5 2C8C 20 A5 2B				jsr funpausa	
+Source: curso01.asm
+    68 2C8F			    fsk
+Macro: FSK [Source: macros.asm]
+     1 2C8F 20 AE 2B			jsr funfsk
+Source: curso01.asm
+    69 				    ;C5
+    70 2C92 A9 23		    lda #35
+    71 2C94 8D EE 27		    sta showtexto+394
+    72 2C97 A9 15		    lda #21
+    73 2C99 8D EF 27		    sta showtexto+395
+    74 2C9C			    pausa 50
+Macro: PAUSA [Source: macros.asm]
+     4 2C9C A2 32				ldx #50
+     5 2C9E 20 A5 2B				jsr funpausa	
+Source: curso01.asm
+    75 2CA1			    fsk
+Macro: FSK [Source: macros.asm]
+     1 2CA1 20 AE 2B			jsr funfsk
+Source: curso01.asm
+    76 				    ;start
+    77 				    ;F7
+    78 2CA4 A9 26		    lda #38
+    79 2CA6 8D E2 27		    sta showtexto+382
+    80 2CA9 A9 17		    lda #23
+    81 2CAB 8D E3 27		    sta showtexto+383
+    82 2CAE			    pausa 50
+Macro: PAUSA [Source: macros.asm]
+     4 2CAE A2 32				ldx #50
+     5 2CB0 20 A5 2B				jsr funpausa	
+Source: curso01.asm
+    83 2CB3			    fsk
+Macro: FSK [Source: macros.asm]
+     1 2CB3 20 AE 2B			jsr funfsk
+Source: curso01.asm
+    84 2CB6 20 91 2B		    jsr mstart
+    85 				;titulo componentes de un atari
+    86 2CB9			    titulo title05
+Macro: TITULO [Source: macros.asm]
+     1 2CB9 A2 13			ldx #19
+     2 2CBB			mtitulo01
+     3 2CBB BD 9E 2D			lda TITLE05,x
+     4 2CBE 9D 85 2A			sta showtitulo2,x
+     5 2CC1 CA				dex
+     6 2CC2 10 F7			bpl mtitulo01
+     7 2CC4 20 C1 2A			jsr funtitulo
+Source: curso01.asm
+    87 				;antic
+    88 2CC7			    texto
+Macro: TEXTO [Source: macros.asm]
+     1 2CC7 20 84 29			jsr funtexto
+Source: curso01.asm
+    89 2CCA			    fsk
+Macro: FSK [Source: macros.asm]
+     1 2CCA 20 AE 2B			jsr funfsk
+Source: curso01.asm
+    90 2CCD 20 91 2B		    jsr mstart
+    91 				;gtia
+    92 2CD0			    texto
+Macro: TEXTO [Source: macros.asm]
+     1 2CD0 20 84 29			jsr funtexto
+Source: curso01.asm
+    93 2CD3			    fsk
+Macro: FSK [Source: macros.asm]
+     1 2CD3 20 AE 2B			jsr funfsk
+Source: curso01.asm
+    94 2CD6 20 91 2B		    jsr mstart
+    95 				;pokey
+    96 2CD9			    texto
+Macro: TEXTO [Source: macros.asm]
+     1 2CD9 20 84 29			jsr funtexto
+Source: curso01.asm
+    97 2CDC			    fsk
+Macro: FSK [Source: macros.asm]
+     1 2CDC 20 AE 2B			jsr funfsk
+Source: curso01.asm
+    98 2CDF 20 91 2B		    jsr mstart
+    99 				;6502
+   100 2CE2			    texto
+Macro: TEXTO [Source: macros.asm]
+     1 2CE2 20 84 29			jsr funtexto
+Source: curso01.asm
+   101 2CE5			    fsk
+Macro: FSK [Source: macros.asm]
+     1 2CE5 20 AE 2B			jsr funfsk
+Source: curso01.asm
+   102 2CE8 20 91 2B		    jsr mstart
+   103
+   104
+   105 				;despedida
+   106 2CEB			    texto
+Macro: TEXTO [Source: macros.asm]
+     1 2CEB 20 84 29			jsr funtexto
+Source: curso01.asm
+   107 2CEE			    fsk
+Macro: FSK [Source: macros.asm]
+     1 2CEE 20 AE 2B			jsr funfsk
+Source: curso01.asm
+   108 2CF1 20 91 2B		    jsr mstart
+   109 2CF4 A0 0A		    ldy #10
+   110 2CF6 8C CB 2B		    sty tmp
+   111 2CF9			apago
+   112 2CF9 AC CB 2B		    ldy tmp
+   113 2CFC			    pausa 3
+Macro: PAUSA [Source: macros.asm]
+     4 2CFC A2 03				ldx #3
+     5 2CFE 20 A5 2B				jsr funpausa	
+Source: curso01.asm
+   114 2D01 88			    dey
+   115 2D02 8C CB 2B		    sty tmp
+   116 2D05 8C C5 02		    sty 709
+   117 2D08 10 EF		    bpl apago
+   118
+   119
+   120 				;final del capitulo
+   121 2D0A			    titulo final
+Macro: TITULO [Source: macros.asm]
+     1 2D0A A2 13			ldx #19
+     2 2D0C			mtitulo01
+     3 2D0C BD B2 2D			lda FINAL,x
+     4 2D0F 9D 85 2A			sta showtitulo2,x
+     5 2D12 CA				dex
+     6 2D13 10 F7			bpl mtitulo01
+     7 2D15 20 C1 2A			jsr funtitulo
+Source: curso01.asm
+   122 2D18			    fsk
+Macro: FSK [Source: macros.asm]
+     1 2D18 20 AE 2B			jsr funfsk
+Source: curso01.asm
+   123 2D1B			    poke 54018,60
+Macro: POKE [Source: macros.asm]
+     4 2D1B A9 3C				lda #60
+     5 2D1D 8D 02 D3				sta 54018	
+Source: curso01.asm
+   124 				;mostramos reset
+   125 2D20 20 1D 2B		    jsr pfin
+   126 2D23 4C 23 2D		    jmp *
+   127 				;*****************************************
+   128 				; data del programa
+   129 				;*****************************************
+   130 2D26			introduccion
+   131 2D26 00 00 00 00 29 2E + 	.sb "    INTRODUCCION    "
+   132 2D3A			temario
+   133 2D3A 00 00 00 00 00 00 +     .sb "      TEMARIO       "
+   134 2D4E			title01
+   135 2D4E 23 2F 2E 2F 23 29 + 	.sb "CONOCIENDO EL ATARI "
+   136 2D62			title02
+   137 2D62 00 00 00 00 2D 25 + 	.sb "    MEMORIA  ROM    "
+   138 2D76			title03
+   139 2D76 00 00 00 00 2D 25 + 	.sb "    MEMORIA  RAM    "
+   140 2D8A			title04
+   141 2D8A 29 2E 34 25 32 29 + 	.sb "INTERIOR DE MEMORIA "
+   142 2D9E			title05
+   143 2D9E 00 23 2F 2D 30 2F +     .sb " COMPONENTES  ATARI "
+   144
+   145
+   146
+   147
+   148
+   149 2DB2			final
+   150 2DB2 00 00 26 29 2E 00 +     .sb "  FIN DEL CAPITULO  "
+   151 2DC6			showdata
+   152 				;bienvenida al curso
+   153 2DC6 04			    .by 4
+   154 2DC7 22 69 65 6E 76 65 +     .sb "Bienvenidos al curso de Assembler,"
+   155 2DE9 9B 04		    .by $9b,4
+   156 2DEB 70 61 72 61 00 00 +     .sb "para  computadoras  Atari, versiones"
+   157 2E0F 9B 04		    .by $9b,4
+   158 2E11 78 6C 00 79 00 78 +     .sb "xl y xe."
+   159 2E19 9B 4A		    .by $9b,74
+   160 2E1B 25 6E 00 00 65 73 +     .sb "En  este curso  podras  aprender a"
+   161 2E3D 9B 04		    .by $9b,4
+   162 2E3F 6D 61 6E 65 6A 61 +     .sb "manejar,  programar  y  conocer, los"
+   163 2E63 9B 04		    .by $9b,4
+   164 2E65 63 6F 6E 63 65 70 +     .sb "conceptos basicos de la programacion"
+   165 2E89 9B 04		    .by $9b,4
+   166 2E8B 64 65 00 61 73 73 +     .sb "de assembler, para que practiques en"
+   167 2EAF 9B 04		    .by $9b,4
+   168 2EB1 74 75 00 63 6F 6D +     .sb "tu computadora,  y crees tus propios"
+   169 2ED5 9B 04		    .by $9b,4
+   170 2ED7 70 72 6F 79 65 63 +     .sb "proyectos."
+   171 2EE1 9B 48		    .by $9b,72
+   172 2EE3 34 65 00 64 65 6A +     .sb "Te dejo con  estos  tutoriales que"
+   173 2F05 9B 04		    .by $9b,4
+   174 2F07 65 73 74 61 72 61 +     .sb "estaran  en  varios  tomos  para  tu"
+   175 2F2B 9B 04		    .by $9b,4
+   176 2F2D 61 70 72 65 6E 64 +     .sb "aprendisaje."
+   177 2F39 9B 56		    .by $9b,86
+   178 2F3B 34 65 00 73 61 6C +     .sb "Te saluda Dogdark."
+   179 2F4D FF			    .by $ff
+   180 				;temario del curso
+   181 2F4E 0A			    .by 10
+   182 2F4F 80 B4 A5 AD A1 B2 +     .sb +128," TEMARIO DEL CURSO "
+   183 2F62 9C			    .by $9c
+   184 2F63 35			    .by 53
+   185 2F64 21 09 00 23 2F 2E +     .sb "A) CONOCIENDO EL ATARI"
+   186 2F7A 9C			    .by $9c
+   187 2F7B 12			    .by 18
+   188 2F7C 22 09 00 22 29 34 +     .sb "B) BIT & BYTES"
+   189 2F8A 9C			    .by $9c
+   190 2F8B 1A			    .by 26
+   191 2F8C 23 09 00 25 24 29 +     .sb "C) EDITORES DE CODIGO"
+   192 2FA1 9C			    .by $9c
+   193 2FA2 13			    .by 19
+   194 2FA3 24 09 00 33 29 33 +     .sb "D) SISTEMAS NUMERICOS: DECIMAL,"
+   195 2FC2 9B			    .by $9b
+   196 2FC3 0C			    .by 12
+   197 2FC4 22 29 2E 21 32 29 +     .sb "BINARIOS Y HEXADECIMAL"
+   198 2FDA 9C			    .by $9c
+   199 2FDB 0F			    .by 15
+   200 2FDC 25 09 00 29 2E 34 +     .sb "E) INTRUCCIONES LDA,LDX,LDY"
+   201 2FF7 9C			    .by $9c
+   202 2FF8 0D			    .by 13
+   203 2FF9 26 09 00 29 2E 34 +     .sb "F) INTRUCCIONES STA,STX,STY"
+   204 3014 9C			    .by $9c
+   205 3015 0D			    .by 13
+   206 3016 27 09 00 33 21 2C +     .sb "G) SALTANDO CON JMP"
+   207 3029 9C			    .by $9c
+   208 302A 15			    .by 21
+   209 302B 28 09 00 23 2F 2D +     .sb "H) COMPARANDO Y SALTOS BRANCH"
+   210 3048 9C			    .by $9c
+   211 3049 0B			    .by 11
+   212 304A 29 09 00 29 2E 24 +     .sb "I) INDEXACIONES"
+   213 3059 9C			    .by $9c
+   214 305A 19			    .by 25
+   215 305B 2A 09 00 24 29 33 +     .sb "J) DISPLAY LIST"
+   216 306A 9C			    .by $9c
+   217 306B 19			    .by 25
+   218 306C 2B 09 00 36 21 32 +     .sb "K) VARIOS ITEM"
+   219 307A FF			    .by $ff
+   220 				;conociendo tu atari
+   221 307B 0A			    .by 10
+   222 307C 80 A3 AF AE AF A3 +     .sb +128," CONOCIENDO EL ATARI "
+   223 3091 9C			    .by $9c
+   224 3092 5D			    .by 93
+   225 3093 25 6C 00 61 74 61 +     .sb "El atari consta con  dos  tipos de"
+   226 30B5 9B 04		    .by $9b,4
+   227 30B7 6D 65 6D 6F 72 69 +     .sb "memoria  en  su  interior, ambas son"
+   228 30DB 9B 04		    .by $9b,4
+   229 30DD 69 6D 70 6F 72 74 +     .sb "importantes para  su funcionamiento,"
+   230 3101 9B 04		    .by $9b,4
+   231 3103 70 65 72 6F 00 00 +     .sb "pero  son  distintas,  ya que una es"
+   232 3127 9B 04		    .by $9b,4
+   233 3129 6D 6F 64 69 66 69 +     .sb "modificable y la otra no, excepto en"
+   234 314D 9B 04		    .by $9b,4
+   235 314F 61 6C 67 75 6E 6F +     .sb "algunos bytes que estan libres para"
+   236 3172 9B 05		    .by $9b,5
+   237 3174 73 75 00 75 73 6F +     .sb "su uso."
+   238 317B 9C 50		    .by $9c,80
+   239 317D 51 52 52 52 52 52 +     .sb +32,"QRRRRRRRE"
+   240 3186 00 00 00		    .sb "   "
+   241 3189 51 52 52 52 52 52 +     .sb +32,"QRRRRRRRE"
+   242 3192 9B 13		    .by $9b,19
+   243 3194 7C 00 00 32 2F 2D +     .sb "|  ROM  |   |  RAM  |"
+   244 31A9 9B 13		    .by $9b,19
+   245 31AB 5A 52 52 52 52 52 +     .sb +32,"ZRRRRRRRC"
+   246 31B4 00 00 00		    .sb "   "
+   247 31B7 5A 52 52 52 52 52 +     .sb +32,"ZRRRRRRRC"
+   248 31C0 FF			    .by $ff
+   249 				;memoria rom
+   250 31C1 0D			    .by 13
+   251 31C2 80 AD A5 AD AF B2 +     .sb +128," MEMORIA  ROM "
+   252 31D0 9C 39		    .by $9c,57
+   253 31D2 2C 61 00 32 2F 2D +     .sb "La ROM, es  una  memoria reservada"
+   254 31F4 9B 04		    .by $9b,4
+   255 31F6 64 65 6C 00 21 74 +     .sb "del Atari, que no se puede escribir,"
+   256 321A 9B 04		    .by $9b,4
+   257 321C 73 61 6C 76 6F 00 +     .sb "salvo algunas posiciones de  memoria"
+   258 3240 9B 04		    .by $9b,4
+   259 3242 64 69 73 70 6F 6E +     .sb "disponibles, por lo cual el  usuario"
+   260 3266 9B 04		    .by $9b,4
+   261 3268 6E 6F 00 70 75 65 +     .sb "no puede modificiar pero si obtener"
+   262 328B 9B 05		    .by $9b,5
+   263 328D 6C 6F 73 00 62 79 +     .sb "los bytes de sus posiciones."
+   264 32A9 9C 36		    .by $9c,54
+   265 32AB 33 75 73 00 62 79 +     .sb "Sus bytes disponibles son:"
+   266 32C5 9B 35		    .by $9b,53
+   267 32C7 04 23 22 0D 04 23 +     .sb "$CB-$CC,$CD-$80-$81-$82,$83"
+   268 32E2 9B 35		    .by $9b,53
+   269 32E4 25 6E 74 72 65 00 +     .sb "Entre otros."
+   270 32F0 FF			    .by $ff
+   271 				;memoria ram
+   272 32F1 0D			    .by 13
+   273 32F2 80 AD A5 AD AF B2 +     .sb +128," MEMORIA  RAM "
+   274 3300 9C 39		    .by $9c,57
+   275 3302 2C 61 00 00 6D 65 +     .sb "La  memoria  RAM,   es  totalmente"
+   276 3324 9B 04		    .by $9b,4
+   277 3326 76 6F 6C 61 74 69 +     .sb "volatil y esta puede ser escrita por"
+   278 334A 9B 04		    .by $9b,4
+   279 334C 62 79 74 65 73 0C +     .sb "bytes, a gusto del programador."
+   280 336B 9B 33		    .by $9b,51
+   281 336D 30 65 72 6F 00 65 +     .sb "Pero existe  una  gran  desventaja"
+   282 338F 9B 04		    .by $9b,4
+   283 3391 63 6F 6E 00 00 6C +     .sb "con  la  memoria  RAM,  esta al  ser"
+   284 33B5 9B 04		    .by $9b,4
+   285 33B7 76 6F 6C 61 74 69 +     .sb "volatil,  al  momento  de  apagar tu"
+   286 33DB 9B 04		    .by $9b,4
+   287 33DD 21 74 61 72 69 0C +     .sb "Atari, todo  lo  que se encuentra en"
+   288 3401 9B 04		    .by $9b,4
+   289 3403 6C 61 00 32 21 2D +     .sb "la RAM,  desaparece automaticamente,"
+   290 3427 9B 04		    .by $9b,4
+   291 3429 6E 6F 00 71 75 65 +     .sb "no quedando registro  alguno  de  tu"
+   292 344D 9B 04		    .by $9b,4
+   293 344F 74 72 61 62 61 6A +     .sb "trabajo,  por eso es muy importante,"
+   294 3473 9B 04		    .by $9b,4
+   295 3475 73 69 65 6D 70 72 +     .sb "siempre respaldar todo."
+   296 348C FF			    .by $ff
+   297 				;celdas de memoria
+   298 348D 07			    .by 7
+   299 348E 80 A9 AE B4 A5 B2 +     .sb +128," INTERIOR DE UNA MEMORIA "
+   300 34A7 9C 34		    .by $9c,52
+   301 34A9 2C 61 73 00 6D 65 +     .sb "Las memorias,  son  almacenaje  de"
+   302 34CB 9B 04		    .by $9b,4
+   303 34CD 62 79 74 65 73 0C +     .sb "bytes, es como una colmena de abejas"
+   304 34F1 9B 04		    .by $9b,4
+   305 34F3 64 6F 6E 64 65 00 +     .sb "donde  en   cada   cubiculo   puedes"
+   306 3517 9B 04		    .by $9b,4
+   307 3519 69 6E 73 65 72 74 +     .sb "insertar un byte."
+   308 352A 9B 68		    .by $9b,104
+   309 352C 51 52 52 57 52 52 +     .sb +32,"QRRWRRWRRWRRWRRWRRWRRWRRWRRWRRWRRE"
+   310 354E 9B 06		    .by $9b,6
+   311 3550 7C 00 00 7C 00 00 +     .sb     "|  |  |  |  |  |  |  |  |  |  |  |"
+   312 3572 9B 06		    .by $9b,6
+   313 3574 5A 52 52 58 52 52 +     .sb +32,"ZRRXRRXRRXRRXRRXRRXRRXRRXRRXRRXRRC"
+   314 3596 FF			    .by $ff
+   315 				;componentes de un atari
+   316 3597 07			    .by 7
+   317 3598 80 A3 AF AD B0 AF +     .sb +128," COMPONENTES DE UN ATARI "
+   318 35B1 9C 34		    .by $9c,52
+   319 35B3 25 6C 00 21 74 61 +     .sb "El Atari tiene varios chips en  su"
+   320 35D5 9B 04		    .by $9b,4
+   321 35D7 69 6E 74 65 72 69 +     .sb "interior,  solo  nombraremos los mas"
+   322 35FB 9B 04		    .by $9b,4
+   323 35FD 69 6D 70 6F 72 74 +     .sb "importantes."
+   324 3609 9B 44		    .by $9b,68
+   325 360B 21 2E 34 29 23 1A +     .sb "ANTIC: Junto con el GTIA,   formaron"
+   326 362F 9B 04		    .by $9b,4
+   327 3631 65 6C 00 63 6F 72 +     .sb "el corazon de los graficos atari, ya"
+   328 3655 9B 04		    .by $9b,4
+   329 3657 71 75 65 00 00 65 +     .sb "que  era  un  micropocesador   quien"
+   330 367B 9B 04		    .by $9b,4
+   331 367D 70 72 6F 63 65 73 +     .sb "procesaba     instrucciones       de"
+   332 36A1 9B 04		    .by $9b,4
+   333 36A3 76 69 73 75 61 6C +     .sb "visualizacion.  Una   secuencia   de"
+   334 36C7 9B 04		    .by $9b,4
+   335 36C9 69 6E 73 74 72 75 +     .sb "instrucciones completa era  conocida"
+   336 36ED 9B 04		    .by $9b,4
+   337 36EF 63 6F 6D 6F 00 00 +     .sb "como   Display   List   ( lista   de"
+   338 3713 9B 04		    .by $9b,4
+   339 3715 64 65 73 70 6C 69 +     .sb "despliegue)."
+   340 3721 FF			    .by $ff
+   341 				;gtia
+   342 3722 54			    .by 84
+   343 3723 27 34 29 21 1A 00 +     .sb "GTIA: Este recibe  la  informacion"
+   344 3745 9B 04		    .by $9b,4
+   345 3747 67 72 61 66 69 63 +     .sb "grafica del antic y tambien controla"
+   346 376B 9B 04		    .by $9b,4
+   347 376D 6C 6F 73 00 73 70 +     .sb "los sprites, deteccion de coliciones"
+   348 3791 9B 04		    .by $9b,4
+   349 3793 63 6F 6E 74 72 6F +     .sb "control de prioridad y el control de"
+   350 37B7 9B 04		    .by $9b,4
+   351 37B9 6C 75 6D 69 6E 61 +     .sb "luminancia  del  color(Brillo). GTIA"
+   352 37DD 9B 04		    .by $9b,4
+   353 37DF 74 6F 6D 61 00 74 +     .sb "toma toda la informacion y  hace una"
+   354 3803 9B 04		    .by $9b,4
+   355 3805 63 6F 6E 76 65 72 +     .sb "conversion  digital   analoga,   asi"
+   356 3829 9B 04		    .by $9b,4
+   357 382B 70 72 6F 64 75 63 +     .sb "produce las senales de video."
+   358 3848 FF			    .by $ff
+   359 				;pokey
+   360 3849 2C			    .by 44
+   361 384A 30 2F 2B 25 39 1A +     .sb "POKEY: Es reponsable  de  leer  el"
+   362 386C 9B 04		    .by $9b,4
+   363 386E 74 65 63 6C 61 64 +     .sb "teclado, generar sonidos y controlar"
+   364 3892 9B 04		    .by $9b,4
+   365 3894 6C 61 73 00 00 63 +     .sb "las  comunicaciones  seriales.  Este"
+   366 38B8 9B 04		    .by $9b,4
+   367 38BA 75 6C 74 69 6D 6F +     .sb "ultimo trabaja en  conjunto  con  la"
+   368 38DE 9B 04		    .by $9b,4
+   369 38E0 30 29 21 0E		    .sb "PIA."
+   370 38E4 9B 4E		    .by $9b,78
+   371 38E6 34 61 6D 62 69 65 +     .sb "Tambien aporta con  temporizadores"
+   372 3908 9B 04		    .by $9b,4
+   373 390A 08 34 69 6D 65 72 +     .sb "(Timers),  un  generador  de numeros"
+   374 392E 9B 04		    .by $9b,4
+   375 3930 61 6C 65 61 74 6F +     .sb "aleatorios  ( Para  crear  ruidos  o"
+   376 3954 9B 04		    .by $9b,4
+   377 3956 6E 75 6D 65 72 6F +     .sb "numeros al azar),  e  interrupciones"
+   378 397A 9B 04		    .by $9b,4
+   379 397C 65 6E 6D 61 73 63 +     .sb "enmascarables. "
+   380 398B 9B 43		    .by $9b,67
+   381 398D 30 6F 6B 65 79 00 +     .sb "Pokey tiene 4 canales de audio, de"
+   382 39AF 9B 04		    .by $9b,4
+   383 39B1 18 00 62 69 74 73 +     .sb "8 bits semi-independientes,  y  cada"
+   384 39D5 9B 04		    .by $9b,4
+   385 39D7 75 6E 6F 00 63 6F +     .sb "uno con  sus  propios  registros  de"
+   386 39FB 9B 04		    .by $9b,4
+   387 39FD 63 6F 6E 74 72 6F +     .sb "control  de  frecuencia,   ruido   y"
+   388 3A21 9B 04		    .by $9b,4
+   389 3A23 76 6F 6C 75 6D 65 +     .sb "volumen."
+   390 3A2B FF			    .by $ff
+   391 				;6502
+   392 3A2C 54			    .by 84
+   393 3A2D 16 15 10 12 1A 00 +     .sb "6502: Uno de los mas importante en"
+   394 3A4F 9B 04		    .by $9b,4
+   395 3A51 6E 75 65 73 74 72 +     .sb "nuestro atari,  es un micropocesador"
+   396 3A75 9B 04		    .by $9b,4
+   397 3A77 64 65 00 00 18 00 +     .sb "de  8  bits con un bus de  direccion"
+   398 3A9B 9B 04		    .by $9b,4
+   399 3A9D 64 65 00 00 11 16 +     .sb "de  16  bits,  con   una   velocidad"
+   400 3AC1 9B 04		    .by $9b,4
+   401 3AC3 61 70 72 6F 78 69 +     .sb "aproximada  de   1mhz,   y   es   el"
+   402 3AE7 9B 04		    .by $9b,4
+   403 3AE9 65 6E 63 61 72 67 +     .sb "encargado  de  la  mayoria   de  los"
+   404 3B0D 9B 04		    .by $9b,4
+   405 3B0F 70 72 6F 63 65 73 +     .sb "procesos  que  genera  el computador"
+   406 3B33 9B 04		    .by $9b,4
+   407 3B35 21 74 61 72 69 0C +     .sb "Atari, sin embargo, se ocupa mas que"
+   408 3B59 9B 04		    .by $9b,4
+   409 3B5B 6E 61 64 61 00 00 +     .sb "nada  de  ordenar el  atari  en  los"
+   410 3B7F 9B 04		    .by $9b,4
+   411 3B81 70 72 6F 63 65 73 +     .sb "procesos ya que cada microprocesador"
+   412 3BA5 9B 04		    .by $9b,4
+   413 3BA7 69 6E 63 6C 75 69 +     .sb "incluido tiene su tarea propia."
+   414 3BC6 FF			    .by $ff
+   415 				;pantalla final de despedida
+   416 3BC7 0E			    .by 14
+   417 3BC8 80 A4 A5 B3 B0 A5 +     .sb +128," DESPEDIDA "
+   418 3BD3 9B 8B		    .by $9b,139
+   419 3BD5 25 73 70 65 72 61 +     .sb "Esperando que este  capitulo  haya"
+   420 3BF7 9B 04		    .by $9b,4
+   421 3BF9 73 69 64 6F 00 64 +     .sb "sido de tu agrado, te espero  en  el"
+   422 3C1D 9B 04		    .by $9b,4
+   423 3C1F 70 72 6F 78 69 6D +     .sb "proximo,   para  seguir  aprendiendo"
+   424 3C43 9B 04		    .by $9b,4
+   425 3C45 61 73 73 65 6D 62 +     .sb "assembler,  ya  entrando de lleno en"
+   426 3C69 9B 04		    .by $9b,4
+   427 3C6B 6C 61 00 70 72 6F +     .sb "la programacion  y  conocimientos de"
+   428 3C8F 9B 04		    .by $9b,4
+   429 3C91 6C 6F 73 00 63 6F +     .sb "los comportamientos de  assembler en"
+   430 3CB5 9B 04		    .by $9b,4
+   431 3CB7 21 74 61 72 69 0E	    .sb "Atari."
+   432 3CBD 9B 7E		    .by $9b,126
+   433 3CBF 00 35 6E 00 67 72 +     .sb " Un gran abrazo para ti."
+   434 3CD7 FF			    .by $ff
+   435
+   436 = 3CD8			tablap0 = *
+   437 = 3DD8			tablap1 = tablap0+256	
+   438 3CD8			valor_inicial
+   439 3CD8 00				.by $00
+   440 02E0-02E1> CE 2B		    run inicio
